@@ -8,6 +8,8 @@ from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 from unittest import TestCase
+from fixtures import TEST_PAYLOAD
+
 
 
 
@@ -73,3 +75,35 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("testorg")
         result = client.has_license(repo, license_key)
         self.assertEqual(result, expected)
+        
+@parameterized_class([
+    {
+        "org_payload": TEST_PAYLOAD["org_payload"],
+        "repos_payload": TEST_PAYLOAD["repos_payload"],
+        "expected_repos": TEST_PAYLOAD["expected_repos"],
+        "apache2_repos": TEST_PAYLOAD["apache2_repos"],
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test class for GithubOrgClient"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Patch requests.get and configure it to return mock responses"""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+
+        def side_effect(url):
+            mock_response = MagicMock()
+            if url == "https://api.github.com/orgs/google":
+                mock_response.json.return_value = cls.org_payload
+            elif url == "https://api.github.com/orgs/google/repos":
+                mock_response.json.return_value = cls.repos_payload
+            return mock_response
+
+        cls.mock_get.side_effect = side_effect
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop the patcher for requests.get"""
+        cls.get_patcher.stop()
