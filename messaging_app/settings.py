@@ -10,6 +10,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'chats',
+    'oauth2_provider',
 ]
 
 
@@ -20,6 +21,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication'
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ]
 }
 
 AUTH_USER_MODEL = 'chats.User'
