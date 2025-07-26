@@ -31,14 +31,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination',  # ✅ Custom pagination
-    'PAGE_SIZE': 20,  # ✅ Page size fallback
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.OrderingFilter',
-        'rest_framework.filters.SearchFilter',
-    ],
+    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination',  # ✅ use custom pagination
+    'PAGE_SIZE': 20,  # ✅ sets default page size
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
+
 
 
 # Use custom user model
