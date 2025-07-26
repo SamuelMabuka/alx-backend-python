@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -10,10 +8,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'rest_framework_simplejwt',
-    'oauth2_provider',
-
     'chats',
+    'oauth2_provider',
+    'rest_framework_simplejwt',  # ✅ Added
 ]
 
 # Django REST Framework configuration
@@ -22,17 +19,19 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',  # ✅ Added
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 
-# Custom user model
+# Use custom user model
 AUTH_USER_MODEL = 'chats.User'
 
-# Simple JWT settings
+# Optional: Simple JWT settings
+from datetime import timedelta
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
