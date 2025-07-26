@@ -15,10 +15,12 @@ INSTALLED_APPS = [
 
     # Third-party
     'rest_framework',
+    'rest_framework_simplejwt',
     'oauth2_provider',
 
     # Local apps
     'chats',
+
 ]
 
 # Django REST Framework configuration
