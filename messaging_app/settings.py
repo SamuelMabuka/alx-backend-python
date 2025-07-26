@@ -24,14 +24,15 @@ INSTALLED_APPS = [
 # Django REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',         # ✅ Now included
+        'rest_framework.authentication.SessionAuthentication',       # ✅ Now included
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
 
 # Use custom user model
 AUTH_USER_MODEL = 'chats.User'

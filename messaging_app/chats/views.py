@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.status import HTTP_403_FORBIDDEN  # <-- ✅ This is now included
 
 from .models import Message, Conversation
 from .serializers import MessageSerializer
@@ -28,6 +29,9 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         user = self.request.user
         if user != conversation.sender and user != conversation.recipient:
-            raise PermissionDenied("You are not a participant in this conversation.")
+            raise PermissionDenied(
+                detail="You are not a participant in this conversation.",
+                code=HTTP_403_FORBIDDEN  # <-- ✅ Custom 403 response
+            )
 
         serializer.save(sender=user, conversation=conversation)
