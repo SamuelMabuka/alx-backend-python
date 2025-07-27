@@ -38,9 +38,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-MIDDLEWARE = [
-    # existing middleware...
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'chats.middleware.RequestLoggingMiddleware',  # ✅ Add this
-    "chats.middleware.RestrictAccessByTimeMiddleware", 
-]
