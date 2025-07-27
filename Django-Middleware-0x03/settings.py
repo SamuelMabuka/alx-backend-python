@@ -39,8 +39,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 MIDDLEWARE = [
-    # ... existing middleware ...
-    'middleware.RequestLoggingMiddleware',
-    'middleware.RestrictAccessByTimeMiddleware',
-    'middleware.OffensiveLanguageMiddleware',  # 👈 Add this
+    # ... other middleware ...
+    'middleware.RequestLoggingMiddleware',  # 👈 add this
 ]
+
