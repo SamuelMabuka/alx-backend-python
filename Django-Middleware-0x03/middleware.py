@@ -1,19 +1,27 @@
 # middleware.py
-from datetime import datetime
-from django.http import HttpResponseForbidden
+from datetime import datetime, timedelta
+from django.http import HttpResponseTooManyRequests
 
 
-class RestrictAccessByTimeMiddleware:
+class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
+        self.ip_message_log = {}  # {ip_address: [timestamps]}
 
     def __call__(self, request):
-        # Check if the request path is for the messaging app (e.g., /chats/)
-        if request.path.startswith('/chats/'):
-            now = datetime.now().time()
-            # Allowed time window: 18:00 (6PM) to 21:00 (9PM)
-            if not (now >= datetime.strptime("18:00", "%H:%M").time() and
-                    now <= datetime.strptime("21:00", "%H:%M").time()):
-                return HttpResponseForbidden("Access to chats is restricted outside 6PM–9PM.")
+        # Only rate-limit POST requests to chat endpoints
+        if request.path.startswith('/chats/') and request.method == 'POST':
+            ip = self.get_client_ip(request)
+            now = datetime.now()
 
-        return self.get_response(request)
+            # Get or initialize the list of timestamps for this IP
+            timestamps = self.ip_message_log.get(ip, [])
+
+            # Filter timestamps to keep only those within the last 60 seconds
+            one_minute_ago = now - timedelta(minutes=1)
+            timestamps = [ts for ts in timestamps if ts > one_minute_ago]
+
+            if len(timestamps) >= 5:
+                return HttpResponseTooManyRequests("Rate limit exceeded: Max 5 messages per minute.")
+
+            # Append current timestamp and update the log

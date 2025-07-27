@@ -39,10 +39,8 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 MIDDLEWARE = [
-    # Django's default middleware...
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # Your custom middlewares (adjust path if needed)
+    # ... existing middleware ...
     'middleware.RequestLoggingMiddleware',
-    'middleware.RestrictAccessByTimeMiddleware',  # 👈 Add this line
+    'middleware.RestrictAccessByTimeMiddleware',
+    'middleware.OffensiveLanguageMiddleware',  # 👈 Add this
 ]
