@@ -39,7 +39,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 MIDDLEWARE = [
-    # ... other middleware ...
-    'middleware.RequestLoggingMiddleware',  # 👈 add this
+    # existing middleware...
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'chats.middleware.RequestLoggingMiddleware',  # ✅ Add this
 ]
-
