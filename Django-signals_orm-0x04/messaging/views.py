@@ -4,7 +4,6 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Prefetch
-
 from .models import Message
 
 
@@ -92,3 +91,8 @@ def threaded_messages_view(request):
     ).order_by("-timestamp")
 
     return render(request, "messages/threaded.html", {"messages": messages})
+
+@login_required
+def unread_messages_view(request):
+    unread_messages = Message.unread.for_user(request.user)
+    return render(request, 'messages/unread.html', {'messages': unread_messages})

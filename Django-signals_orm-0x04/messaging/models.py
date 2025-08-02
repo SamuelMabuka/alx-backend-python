@@ -1,5 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        return self.get_queryset().filter(
+            receiver=user,
+            read=False
+        ).select_related('sender').only('id', 'sender', 'content', 'timestamp')
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
@@ -7,6 +16,7 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     parent_message = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
     edited = models.BooleanField(default=False)
     edited_by = models.ForeignKey(  # <--- NEW FIELD
         User,
@@ -24,7 +34,9 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name='replies'   # makes it easy to get replies: message.replies.all()
     )
-
+    objects = models.Manager()  # Default manager
+    unread_messages = UnreadMessagesManager()  # Custom manager for unread messages
+    
     def __str__(self):
         return f'Message from {self.sender.username} to {self.receiver.username}'
 
