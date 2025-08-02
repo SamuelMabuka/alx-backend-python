@@ -13,6 +13,15 @@ class Message(models.Model):
         null=True,
         blank=True,
         related_name='edited_messages'
+    
+    )
+    
+    parent_message = models.ForeignKey(
+        'self',                  # reference Message itself
+        null=True,               # root/top-level messages won't have a parent
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'   # makes it easy to get replies: message.replies.all()
     )
 
     def __str__(self):
