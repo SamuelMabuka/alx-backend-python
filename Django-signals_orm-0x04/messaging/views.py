@@ -93,15 +93,6 @@ def threaded_messages_view(request):
     return render(request, "messages/threaded.html", {"messages": messages})
 
 @login_required
-def unread_messages_view(request):
-    unread_messages = Message.unread.for_user(request.user)
-    return render(request, 'messages/unread.html', {'messages': unread_messages})
-
-
-@login_required
 def unread_inbox_view(request):
     unread_messages = Message.unread.for_user(request.user)
-
-    return render(request, 'messages/unread_inbox.html', {
-        'unread_messages': unread_messages
-    })
+    return render(request, 'messages/unread.html', {'messages': unread_messages})
