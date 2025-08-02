@@ -25,3 +25,17 @@ def save_message_edit_history(sender, instance, **kwargs):
                 )
         except Message.DoesNotExist:
             pass  # Safe guard for race conditions
+
+
+@receiver(post_delete, sender=User)
+def cleanup_user_data(sender, instance, **kwargs):
+    # Delete messages where user was sender or receiver
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+    
+    # Delete notifications for this user
+    Notification.objects.filter(user=instance).delete()
+
+    # Optionally, delete message histories for messages the user interacted with
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
