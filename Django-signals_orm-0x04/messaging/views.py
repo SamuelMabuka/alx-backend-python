@@ -1,4 +1,5 @@
 # messaging/views.py
+from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -96,3 +97,12 @@ def threaded_messages_view(request):
 def unread_inbox_view(request):
     unread_messages = Message.unread.for_user(request.user)
     return render(request, 'messages/unread.html', {'messages': unread_messages})
+
+@cache_page(60)
+def threaded_messages_view(request):
+    messages = Message.objects.filter(parent_message__isnull=True) \
+        .select_related('sender', 'receiver') \
+        .prefetch_related(
+            Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
+        )
+    return render(request, 'messages/threaded.html', {'messages': messages})
