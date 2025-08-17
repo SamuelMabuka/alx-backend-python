@@ -1,9 +1,12 @@
 from pathlib import Path
 from datetime import timedelta
 import environ
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Initialize environ
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")  # load variables from .env
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,19 +18,18 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'oauth2_provider',
+    'django_filters',   # needed for filtering support
     'chats',
-
 ]
-
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DATABASE", "messaging_db"),
-        "USER": os.getenv("MYSQL_USER", "messaging_user"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "messaging_pass"),
-        "HOST": "db",  # matches docker-compose service name
-        "PORT": "3306",
+        "NAME": env("MYSQL_DATABASE", default="messaging_db"),
+        "USER": env("MYSQL_USER", default="messaging_user"),
+        "PASSWORD": env("MYSQL_PASSWORD", default="messaging_pass"),
+        "HOST": env("MYSQL_HOST", default="db"),  # docker-compose service name
+        "PORT": env("MYSQL_PORT", default="3306"),
     }
 }
 
@@ -43,7 +45,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-
 AUTH_USER_MODEL = 'chats.User'
 
 SIMPLE_JWT = {
@@ -52,4 +53,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-
