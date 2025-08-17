@@ -23,11 +23,11 @@ INSTALLED_APPS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": env("MYSQL_DATABASE"),
-        "USER": env("MYSQL_USER"),
-        "PASSWORD": env("MYSQL_PASSWORD"),
-        "HOST": env("MYSQL_HOST"),
-        "PORT": env("MYSQL_PORT"),
+        "NAME": os.getenv("MYSQL_DATABASE", "messaging_db"),
+        "USER": os.getenv("MYSQL_USER", "messaging_user"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD", "messaging_pass"),
+        "HOST": "db",  # matches docker-compose service name
+        "PORT": "3306",
     }
 }
 
