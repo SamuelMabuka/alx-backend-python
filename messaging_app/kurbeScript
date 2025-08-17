@@ -1,32 +1,33 @@
 #!/bin/bash
-# kurbeScript - Start and verify a local Kubernetes cluster with Minikube
+set -e
 
-set -e  # Exit immediately if a command exits with a non-zero status
-
-# Check if minikube is installed
-if ! command -v minikube &> /dev/null
-then
-    echo "❌ Minikube is not installed. Please install it first:"
-    echo "👉 https://minikube.sigs.k8s.io/docs/start/"
-    exit 1
-fi
-
-# Check if kubectl is installed
+# 1. Install kubectl if missing
 if ! command -v kubectl &> /dev/null
 then
-    echo "❌ kubectl is not installed. Please install it first:"
-    echo "👉 https://kubernetes.io/docs/tasks/tools/"
-    exit 1
+    echo "📥 Installing kubectl..."
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
 fi
 
+# 2. Install Minikube if missing
+if ! command -v minikube &> /dev/null
+then
+    echo "📥 Installing Minikube..."
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+fi
+
+# 3. Start Kubernetes cluster
 echo "🚀 Starting Minikube cluster..."
 minikube start
 
-echo "✅ Verifying Kubernetes cluster..."
+# 4. Verify cluster
+echo "✅ Kubernetes cluster info:"
 kubectl cluster-info
 
-echo "📋 Retrieving available pods..."
+# 5. List all pods
+echo "📋 Listing all pods:"
 kubectl get pods -A
 
-echo "🎉 Kubernetes cluster is up and running!"
-
+echo "🎉 Kubernetes cluster is ready!"
