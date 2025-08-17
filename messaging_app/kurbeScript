@@ -1,57 +1,22 @@
 #!/bin/bash
-set -e
+# kurbeScript - Sets up a local Kubernetes cluster using Minikube
 
-# ------------------------------
-# Helper: check if a command exists
-# ------------------------------
-command_exists() {
-    command -v "$1" >/dev/null 2>&1
-}
-
-# ------------------------------
-# 1. Install kubectl if missing
-# ------------------------------
-if ! command_exists kubectl; then
-    echo "📥 Installing kubectl..."
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    chmod +x kubectl
-    sudo mv kubectl /usr/local/bin/
-fi
-
-# ------------------------------
-# 2. Install Minikube if missing
-# ------------------------------
-if ! command_exists minikube; then
-    echo "📥 Installing Minikube..."
+# Install Minikube if not already installed
+if ! command -v minikube &> /dev/null; then
+    echo "Installing Minikube..."
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
 fi
 
-# ------------------------------
-# 3. Disable swap temporarily (required by Kubernetes)
-# ------------------------------
-if free | awk '/^Swap:/ {exit !$2}'; then
-    echo "⚠️  Swap is enabled. Disabling temporarily..."
-    sudo swapoff -a
-fi
-
-# ------------------------------
-# 4. Start Minikube cluster
-# ------------------------------
-echo "🚀 Starting Minikube cluster..."
+# Start Minikube cluster
+echo "Starting Minikube cluster..."
 minikube start --driver=docker
 
-# ------------------------------
-# 5. Verify cluster
-# ------------------------------
-echo "✅ Kubernetes cluster info:"
+# Verify cluster is running
+echo "Verifying cluster status..."
 kubectl cluster-info
 
-# ------------------------------
-# 6. List all pods
-# ------------------------------
-echo "📋 Listing all pods:"
-kubectl get pods -A
-
-echo "🎉 Kubernetes cluster is ready!"
-
+# Get available pods in all namespaces
+echo "Retrieving available pods..."
+kubectl get pods --all-namespaces
