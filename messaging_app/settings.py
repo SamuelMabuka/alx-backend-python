@@ -1,5 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
+import environ
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -16,6 +18,18 @@ INSTALLED_APPS = [
     'chats',
 
 ]
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": env("MYSQL_DATABASE"),
+        "USER": env("MYSQL_USER"),
+        "PASSWORD": env("MYSQL_PASSWORD"),
+        "HOST": env("MYSQL_HOST"),
+        "PORT": env("MYSQL_PORT"),
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -38,3 +52,4 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
