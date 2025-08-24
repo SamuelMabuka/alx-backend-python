@@ -4,28 +4,41 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Clone the repo with GitHub credentials
                 git branch: 'main',
-                    url: 'https://github.com/SamuelMabuka/alx-backend-python.git',
-                    credentialsId: 'github-credentials'
+                    credentialsId: 'SamuelMabuka', 
+                    url: 'https://github.com/SamuelMabuka/alx-backend-python.git'
             }
         }
 
-        stage('Build') {
+        stage('Setup Python Environment') {
             steps {
-                echo 'Building project...'
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip3 install --upgrade pip
+                pip3 install -r messaging_app/requirements.txt
+                '''
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                echo 'Running tests...'
+                sh '''
+                . venv/bin/activate
+                pytest --junitxml=report.xml
+                '''
             }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
+            post {
+                always {
+                    junit 'report.xml'  // publish test results in Jenkins
+                }
             }
         }
     }
+
+    triggers {
+        // Manual trigger only
+    }
 }
+// Jenkinsfile for CI/CD pipeline
